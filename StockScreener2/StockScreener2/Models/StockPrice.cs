@@ -13,11 +13,13 @@ namespace StockScreener2.Models
         [ForeignKey("StockID")]
         public virtual Stock Stock { get; set; }
 
+        public decimal Change { get; set; }
         public decimal Bid { get; set; }
         public decimal Ask { get; set; }
         public decimal DaysLow { get; set; }
         public decimal DaysHigh { get; set; }
         public decimal Open { get; set; }
+        public decimal? Close { get; set; }
         public DateTime Created { get; set; }
     }
 }

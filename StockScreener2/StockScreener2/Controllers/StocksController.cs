@@ -13,6 +13,7 @@ using StockScreener2.Service;
 
 namespace StockScreener2.Controllers
 {
+    [Authorize]
     public class StocksController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -24,37 +25,31 @@ namespace StockScreener2.Controllers
 
             List<Stock> stocks = db.Stocks.ToList();
 
-            DateTime priceDate;
+            ApplicationDbContext stockPriceContext = new ApplicationDbContext();
+
+            StockPrice stockPrice = null;
 
             foreach (var stock in stocks)
             {
+                stockPrice = stockPriceContext.StockPrices.Where(s => s.StockID == stock.ID).OrderByDescending(s => s.Created).First();
+
+                if (stockPrice == null || stockPrice.Created < DateTime.Now.AddHours(1))
+                {
+                    stockPrice = DataFetcher.GetStockQuote(stock.Symbol).StockPrices.FirstOrDefault();
+                    stockPrice.StockID = stock.ID;
+                    stockPriceContext.StockPrices.Add(stockPrice);
+                }
+
                 if (stock.StockPrices.Count > 0)
                 {
-                    priceDate = stock.StockPrices.Max(sp => sp.Created);
-
-                    if (priceDate >= DateTime.Now.AddHours(-2))
-                    {
-                        result.Add(stock);
-                    }
-                    else
-                    {
-                        stock.StockPrices.Add(DataFetcher.GetStock(stock.Ticker).StockPrices.FirstOrDefault());
-                        db.Stocks.Attach(stock);
-                        db.Entry(stock).State = EntityState.Modified;
-                        db.SaveChanges();
-                        result.Add(stock);
-                    }
+                    stock.StockPrices.Clear();
+                    stock.StockPrices.Add(stockPrice);
                 }
-                else
-                {
-                    stock.StockPrices.Add(DataFetcher.GetStock(stock.Ticker).StockPrices.FirstOrDefault());
-                    db.Stocks.Attach(stock);
-                    db.Entry(stock).State = EntityState.Modified;
-                    db.SaveChanges();
-                    result.Add(stock);
-                }
+                result.Add(stock);
             }
 
+            stockPriceContext.SaveChanges();
+            
             return result;
         }
 
@@ -108,15 +103,20 @@ namespace StockScreener2.Controllers
 
         // POST: api/Stocks
         [ResponseType(typeof(Stock))]
-        public IHttpActionResult PostStock(Stock stock)
+        public IHttpActionResult PostStock(string stockSymbol)
         {
+            Stock stock = null;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Stocks.Add(stock);
-            db.SaveChanges();
+            if (!db.Stocks.Any(s => s.Symbol == stockSymbol))
+            {
+                stock = DataFetcher.GetStockQuote(stockSymbol);
+                db.Stocks.Add(stock);
+                db.SaveChanges();
+            }
 
             return CreatedAtRoute("DefaultApi", new { id = stock.ID }, stock);
         }

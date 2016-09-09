@@ -1,17 +1,41 @@
 ﻿<!-- ko with: home -->
-<div class="jumbotron">
-    
+<div>
+    <h1>Stock Screener</h1>
 </div>
 <div class="row">
-    <div class="col-md-4">
-       
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=273732">Learn more &raquo;</a></p>
+    <div class="col-md-8">
+        <form data-bind="submit: addStock">
+            Add stock: <input type="text" data-bind='value: stockSymbol, valueUpdate: "afterkeydown"'  placeholder="Enter symbol"/>
+        </form>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Change</th>
+                    <th>Ask</th>
+                    <th>Bid</th>
+                    <th>Days high</th>
+                    <th>Days low</th>
+                    <th>Open</th>
+                    <th>Symbol</th>
+                    <th>Last update</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: stocks">
+                <tr>
+                    <td><span data-bind="text: name"> </span></td>
+                    <td><span data-bind="text: change"> </span></td>
+                    <td><span data-bind="text: ask"> </span></td>
+                    <td><span data-bind="text: bid"> </span></td>
+                    <td><span data-bind="text: daysHigh"> </span></td>
+                    <td><span data-bind="text: daysLow"> </span></td>
+                    <td><span data-bind="text: open"> </span></td>
+                    <td><span data-bind="text: symbol"> </span></td>
+                    <td><span data-bind="text: lastUpdate"> </span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-
-    <div class="col-md-4">
-        
-    </div>
-
     <div class="col-md-4">
         <h2>Web Hosting</h2>
         <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>

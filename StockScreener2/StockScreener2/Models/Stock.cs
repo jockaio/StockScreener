@@ -15,7 +15,7 @@ namespace StockScreener2.Models
             JObject jObject = JObject.Parse(json);
             JToken jStock = jObject["query"]["results"]["quote"];
             Name = (string)jStock["Name"];
-            Ticker = (string)jStock["symbol"];
+            Symbol = (string)jStock["symbol"];
             StockPrices = new List<StockPrice>();
             StockPrices.Add(new StockPrice()
             {
@@ -24,6 +24,8 @@ namespace StockScreener2.Models
                 DaysHigh = (decimal)jStock["DaysHigh"],
                 DaysLow = (decimal)jStock["DaysLow"],
                 Open = (decimal)jStock["Open"],
+                Close = (decimal?)jStock["Close"],
+                Change = (decimal)jStock["Change"],
                 Created = DateTime.Now
 
             });
@@ -31,7 +33,7 @@ namespace StockScreener2.Models
 
         public int ID { get; set; }
         public string Name { get; set; }
-        public string Ticker { get; set; }
+        public string Symbol { get; set; }
         public virtual ICollection<StockPrice> StockPrices { get; set; }
     }
 }

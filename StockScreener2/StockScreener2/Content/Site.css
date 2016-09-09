@@ -9,6 +9,16 @@
     padding-right: 15px;
 }
 
+h1 {
+    font-family: 'Baloo Tamma', cursive;
+    font-weight: bold;
+    font-size: 110px;
+    -webkit-transform: rotate(-3deg);
+    -moz-transform: rotate(-3deg);
+    -ms-transform: rotate(-3deg);
+    -o-transform: rotate(-3deg);
+}
+
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */

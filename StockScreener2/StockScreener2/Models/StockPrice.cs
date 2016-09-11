@@ -20,6 +20,7 @@ namespace StockScreener2.Models
         public decimal DaysHigh { get; set; }
         public decimal Open { get; set; }
         public decimal? Close { get; set; }
+        public decimal Last { get; set; }
         public DateTime Created { get; set; }
     }
 }

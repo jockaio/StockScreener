@@ -1,6 +1,10 @@
 ﻿function HomeViewModel(app, dataModel) {
     var self = this;
 
+    //For error handling
+    self.error = ko.observable("");
+    self.showError = ko.observable(false);
+
     //Array of stocks
     self.stocks = ko.observableArray();
 
@@ -20,6 +24,7 @@
                 console.log(data);
                 self.stocks.push(
                             {
+                                id: data.id,
                                 name: data.name,
                                 symbol: data.symbol,
                                 change: data.stockPrices[0].change,
@@ -29,16 +34,94 @@
                                 daysHigh: data.stockPrices[0].daysHigh,
                                 open: data.stockPrices[0].open,
                                 close: data.stockPrices[0].close,
-                                lastUpdate: new Date(data.stockPrices[0].created).toUTCString().slice(16, 25)
+                                last: data.stockPrices[0].last,
+                                lastUpdate: new Date(data.stockPrices[0].created).toString().slice(16, 25)
                             }
                             );
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+                console.log("Error: ");
+                console.log(xhr);
+                console.log(ajaxOptions);
+                console.log(thrownError);
+                self.error(xhr.responseJSON);
+                self.showError(true);
+                setTimeout(function () { self.showError(false) }, 3000);
             }
         });
     }
+
+    self.deleteStock = function () {
+        var stock = this;
+        $.ajax({
+            method: 'delete',
+            url: '/api/Stocks/' + this.id,
+            contentType: "application/json; charset=utf-8",
+            headers: {
+                'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
+            },
+            success: function (data) {
+                self.stocks.remove(stock);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                self.error(thrownError);
+                self.showError(true);
+            }
+        });
+    }
+
+    //show stock chart
+    self.showChart = function () {
+        $.ajax({
+            method: 'get',
+            url: '/api/Stocks/GetHistoricalQuotes/' + this.id,
+            contentType: "application/json; charset=utf-8",
+            headers: {
+                'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
+            },
+            success: function (data) {
+                console.log("success");
+                console.log(data);
+                self.dates.removeAll();
+                self.closingQuotes.removeAll();
+                var ds = [];
+                var cQs = [];
+                data.forEach(function (quote) {
+                    self.dates.push(new Date(quote.date).toString("dd/MM"));
+                    self.closingQuotes.push(quote.adjClose);
+                });
+                self.stockName(data[0].symbol)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                self.error(thrownError);
+                self.showError(true);
+            }
+        });
+    }
+
+    //chart
+    self.stockName = ko.observable("");
+    self.dates = ko.observableArray();
+    self.closingQuotes = ko.observableArray();
+
+    self.SimpleLineData = {
+        labels: self.dates,
+        datasets: [
+            {
+                label: self.stockName,
+                lineTension: 0,
+                pointStyle: "rectRot",
+                pointHitRadius: 20,
+                backgroundColor: "rgba(220,220,220,0.2)",
+                borderColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: self.closingQuotes
+            }
+        ]
+    };
 
     Sammy(function () {
         this.get('#home', function () {
@@ -56,6 +139,7 @@
                     data.forEach(function (stock) {
                         self.stocks.push(
                             {
+                                id: stock.id,
                                 name: stock.name,
                                 symbol: stock.symbol,
                                 change: stock.stockPrices[0].change,
@@ -65,6 +149,7 @@
                                 daysHigh: stock.stockPrices[0].daysHigh,
                                 open: stock.stockPrices[0].open,
                                 close: stock.stockPrices[0].close,
+                                last: stock.stockPrices[0].last,
                                 lastUpdate: new Date(stock.stockPrices[0].created).toString().slice(16, 25)
                             }
                             );
@@ -74,8 +159,8 @@
                     });
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status);
-                    alert(thrownError);
+                    self.error(thrownError);
+                    self.showError(true);
                 }
             });
         });

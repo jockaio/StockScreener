@@ -33,7 +33,7 @@ namespace StockScreener2.Controllers
             {
                 stockPrice = stockPriceContext.StockPrices.Where(s => s.StockID == stock.ID).OrderByDescending(s => s.Created).First();
 
-                if (stockPrice == null || stockPrice.Created < DateTime.Now.AddHours(1))
+                if (stockPrice == null || stockPrice.Created < DateTime.Now.AddHours(-1))
                 {
                     stockPrice = DataFetcher.GetStockQuote(stock.Symbol).StockPrices.FirstOrDefault();
                     stockPrice.StockID = stock.ID;
@@ -113,9 +113,22 @@ namespace StockScreener2.Controllers
 
             if (!db.Stocks.Any(s => s.Symbol == stockSymbol))
             {
-                stock = DataFetcher.GetStockQuote(stockSymbol);
+                try
+                {
+                    stock = DataFetcher.GetStockQuote(stockSymbol);
+                }
+                catch (Exception)
+                {
+
+                    return Content(HttpStatusCode.BadRequest, "Stock symbol not found.");
+                }
+                
                 db.Stocks.Add(stock);
                 db.SaveChanges();
+            }
+            else
+            {
+                return Content(HttpStatusCode.BadRequest, "The stock you are trying to add is already in the list.");
             }
 
             return CreatedAtRoute("DefaultApi", new { id = stock.ID }, stock);
@@ -135,6 +148,25 @@ namespace StockScreener2.Controllers
             db.SaveChanges();
 
             return Ok(stock);
+        }
+
+        //GET: api/Stocks/GetHistoricalQuotes
+        [Route("api/Stocks/GetHistoricalQuotes/{id}")]
+        [ResponseType(typeof(List<HistoricalStockPrice>))]
+        public IHttpActionResult GetHistoricalQuotes(int id)
+        {
+            string stockSymbol = db.Stocks.Where(s => s.ID == id).Select(s => s.Symbol).First();
+
+            if (stockSymbol == null)
+            {
+                return Content(HttpStatusCode.BadRequest, "Stock symbol not recognized.");
+            }
+            
+            List<HistoricalStockPrice> result = new List<HistoricalStockPrice>();
+
+            result = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-20), DateTime.Now).OrderBy(s => s.Date).ToList();
+
+            return Ok(result);
         }
 
         protected override void Dispose(bool disposing)

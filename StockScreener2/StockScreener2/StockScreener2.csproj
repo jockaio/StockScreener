@@ -261,6 +261,10 @@
     <Compile Include="Migrations\201609051943167_dbupdate8.Designer.cs">
       <DependentUpon>201609051943167_dbupdate8.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201609100721294_dbupdate9.cs" />
+    <Compile Include="Migrations\201609100721294_dbupdate9.Designer.cs">
+      <DependentUpon>201609100721294_dbupdate9.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\HistoricalStockPrice.cs" />
@@ -307,10 +311,13 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\chart.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\knockout-2.3.0.debug.js" />
     <Content Include="Scripts\knockout-2.3.0.js" />
+    <Content Include="Scripts\knockout-3.2.0.min.js" />
+    <Content Include="Scripts\knockout.chart.js" />
     <Content Include="Scripts\knockout.validation.debug.js" />
     <Content Include="Scripts\knockout.validation.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -403,6 +410,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609051943167_dbupdate8.resx">
       <DependentUpon>201609051943167_dbupdate8.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201609100721294_dbupdate9.resx">
+      <DependentUpon>201609100721294_dbupdate9.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

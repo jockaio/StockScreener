@@ -19,7 +19,10 @@ namespace StockScreener2
 
             bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
                 "~/Scripts/knockout-{version}.js",
-                "~/Scripts/knockout.validation.js"));
+                "~/Scripts/knockout.validation.js",
+                "~/Scripts/chart.js",
+                "~/Scripts/knockout.chart.js"
+                ));
 
             bundles.Add(new ScriptBundle("~/bundles/app").Include(
                 "~/Scripts/sammy-{version}.js",

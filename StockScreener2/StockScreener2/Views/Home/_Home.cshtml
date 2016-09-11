@@ -3,43 +3,57 @@
     <h1>Stock Screener</h1>
 </div>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <form data-bind="submit: addStock">
-            Add stock: <input type="text" data-bind='value: stockSymbol, valueUpdate: "afterkeydown"'  placeholder="Enter symbol"/>
+            @*Add stock: <input type="text" data-bind='value: stockSymbol, valueUpdate: "afterkeydown"'  placeholder="Enter symbol"/>*@
+            <div class="input-group col-md-6">
+                <span class="input-group-addon" id="basic-addon1">Add Stock</span>
+                <input type="text" class="form-control" placeholder="Enter symbol" 
+                       data-bind='value: stockSymbol, valueUpdate: "afterkeydown"' aria-describedby="basic-addon1">
+            </div>
+            <div class="alert alert-danger col-md-6" role="alert" data-bind="visible: showError">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                <span data-bind="text: error"></span>
+            </div>
         </form>
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Symbol</th>
                     <th>Change</th>
+                    <th>Last</th>
                     <th>Ask</th>
                     <th>Bid</th>
-                    <th>Days high</th>
-                    <th>Days low</th>
+                    <th>High</th>
+                    <th>Low</th>
                     <th>Open</th>
-                    <th>Symbol</th>
                     <th>Last update</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody data-bind="foreach: stocks">
-                <tr>
-                    <td><span data-bind="text: name"> </span></td>
+                <tr data-bind="click: $parent.showChart">
+                    <td><span data-bind="text: symbol"> </span></td>
                     <td><span data-bind="text: change"> </span></td>
+                    <td><span data-bind="text: last"> </span></td>
                     <td><span data-bind="text: ask"> </span></td>
                     <td><span data-bind="text: bid"> </span></td>
                     <td><span data-bind="text: daysHigh"> </span></td>
                     <td><span data-bind="text: daysLow"> </span></td>
                     <td><span data-bind="text: open"> </span></td>
-                    <td><span data-bind="text: symbol"> </span></td>
                     <td><span data-bind="text: lastUpdate"> </span></td>
+                    <td><a data-bind="click: $parent.deleteStock"><span class="glyphicon glyphicon-trash"></span></a></td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="col-md-6">
+        <h2 data-bind="text: stockName"></h2>
+        <div id="line-example">
+            <canvas id="some-simple-line-chart"
+                    data-bind="chart: { type: 'line', data: SimpleLineData, options: { observeChanges: true, throttle: 3000 }}"></canvas>
+        </div>
     </div>
 </div>
 

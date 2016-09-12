@@ -71,10 +71,25 @@
     }
 
     //show stock chart
-    self.showChart = function () {
+    self.chartLength = ko.observable(7);
+    self.showChart = ko.observable(false);
+    self.hideChart = function () {
+        self.showChart(false);
+    }
+    
+    self.getChart = function (days) {
+        console.log(self.stockId());
+        console.log(days);
+        if (days == undefined) {
+            days = "";
+        }
+        if (this.id != undefined) {
+            self.stockId(this.id);
+        }
+        
         $.ajax({
             method: 'get',
-            url: '/api/Stocks/GetHistoricalQuotes/' + this.id,
+            url: '/api/Stocks/GetHistoricalQuotes/'+self.stockId()+'/'+days,
             contentType: "application/json; charset=utf-8",
             headers: {
                 'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
@@ -91,6 +106,7 @@
                     self.closingQuotes.push(quote.adjClose);
                 });
                 self.stockName(data[0].symbol)
+                self.showChart(true);
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 self.error(thrownError);
@@ -101,6 +117,7 @@
 
     //chart
     self.stockName = ko.observable("");
+    self.stockId = ko.observable("");
     self.dates = ko.observableArray();
     self.closingQuotes = ko.observableArray();
 

@@ -151,9 +151,9 @@ namespace StockScreener2.Controllers
         }
 
         //GET: api/Stocks/GetHistoricalQuotes
-        [Route("api/Stocks/GetHistoricalQuotes/{id}")]
+        [Route("api/Stocks/GetHistoricalQuotes/{id}/{days?}")]
         [ResponseType(typeof(List<HistoricalStockPrice>))]
-        public IHttpActionResult GetHistoricalQuotes(int id)
+        public IHttpActionResult GetHistoricalQuotes(int id, int days = 7)
         {
             string stockSymbol = db.Stocks.Where(s => s.ID == id).Select(s => s.Symbol).First();
 
@@ -164,7 +164,24 @@ namespace StockScreener2.Controllers
             
             List<HistoricalStockPrice> result = new List<HistoricalStockPrice>();
 
-            result = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-20), DateTime.Now).OrderBy(s => s.Date).ToList();
+            result = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-days), DateTime.Now).OrderBy(s => s.Date).ToList();
+
+            //Add todays stock price to include it in the chart.
+
+            StockPrice stockPrice = db.StockPrices.Where(st => st.StockID == id).OrderByDescending(st => st.Created).First();
+            result.Add(
+                new HistoricalStockPrice
+                {
+                    AdjClose = stockPrice.Last,
+                    Close = stockPrice.Last,
+                    Date = stockPrice.Created,
+                    High = stockPrice.DaysHigh,
+                    Low = stockPrice.DaysLow,
+                    Open = stockPrice.Open,
+                    Symbol = stockPrice.Stock.Symbol,
+                    Volume = 0
+                }
+                );
 
             return Ok(result);
         }

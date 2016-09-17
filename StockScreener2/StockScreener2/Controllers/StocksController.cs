@@ -164,10 +164,28 @@ namespace StockScreener2.Controllers
             
             List<HistoricalStockPrice> result = new List<HistoricalStockPrice>();
 
-            result = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-days), DateTime.Now).OrderBy(s => s.Date).ToList();
+            //Create startDate to be able to submit LINQ expression.
+            DateTime startDate = DateTime.Now.AddDays(-days);
+            List<HistoricalStockPrice> dbResult = db.HistoricalStockPrices.Where(hsp => hsp.StockID == id && hsp.Date >= startDate).ToList();
+
+            var ds = Helper.GetWorkingDays(startDate, DateTime.Now);
+
+            //if dbResult does not find the total number of days.
+            if (dbResult.Count < Helper.GetWorkingDays(startDate, DateTime.Now))
+            {
+                //Get historical quotes from API and save the missing dates in the DB.
+                List<HistoricalStockPrice> apiResult = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-days), DateTime.Now, id).OrderBy(s => s.Date).ToList();
+                //var comparedResult = apiResult.Except(dbResult, new HistoricalStockPriceComparer()).ToList();
+                PostHistoricalStockPrices(apiResult.Except(dbResult, new HistoricalStockPriceComparer()).ToList());
+                result = apiResult;
+            }
+            else
+            {
+                //Othervise the dbResult is sufficient.
+                result = dbResult;
+            }
 
             //Add todays stock price to include it in the chart.
-
             StockPrice stockPrice = db.StockPrices.Where(st => st.StockID == id).OrderByDescending(st => st.Created).First();
             result.Add(
                 new HistoricalStockPrice
@@ -184,6 +202,12 @@ namespace StockScreener2.Controllers
                 );
 
             return Ok(result);
+        }
+
+        private void PostHistoricalStockPrices(List<HistoricalStockPrice> historicalStockPrices)
+        {
+            db.HistoricalStockPrices.AddRange(historicalStockPrices);
+            db.SaveChanges();
         }
 
         protected override void Dispose(bool disposing)

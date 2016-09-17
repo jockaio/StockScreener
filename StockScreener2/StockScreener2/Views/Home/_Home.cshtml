@@ -2,6 +2,9 @@
 <div>
     <h1>Stock Screener</h1>
 </div>
+<div class="jumbotron">
+    Add feed.
+</div>
 <div class="row">
     <div class="col-md-6">
         <form data-bind="submit: addStock">
@@ -55,7 +58,8 @@
                 <canvas id="stock-chart-canvas"
                         data-bind="chart: { type: 'line', data: SimpleLineData, options: { observeChanges: true, throttle: 3000 }}"></canvas>
             </div>
-            <div class="btn-group">
+            @* Add class to selected button *@
+            <div class="btn-group" role="group">
                 <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 7)">1W</button>
                 <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 30)">1M</button>
                 <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 90)">3M</button>

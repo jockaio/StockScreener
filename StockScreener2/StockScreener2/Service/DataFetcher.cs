@@ -2,6 +2,7 @@
 using StockScreener2.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -22,6 +23,7 @@ namespace StockScreener2.Service
 
         public static Stock GetStockQuote(string Ticker)
         {
+            Debug.Write("DataFetcher: GetStockQuote called.");
             //Build url
             string url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%3D'" +
                 Ticker + "'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=";
@@ -38,8 +40,10 @@ namespace StockScreener2.Service
             }
          }
 
-        public static List<HistoricalStockPrice> GetHistoricalStockPrice(string Symbol, DateTime StartDate, DateTime EndDate)
+        public static List<HistoricalStockPrice> GetHistoricalStockPrice(string Symbol, DateTime StartDate, DateTime EndDate, int StockID)
         {
+            Debug.Write("DataFetcher: GetHistoricalStockPrice called.");
+
             //Build url
             string url = 
                 "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.historicaldata%20where%20symbol%20%3D%20%22"
@@ -65,6 +69,7 @@ namespace StockScreener2.Service
                     result.Add(
                         new Models.HistoricalStockPrice
                         {
+                            StockID = StockID,
                             Symbol = (string)quote["Symbol"],
                             Date = new DateTime(int.Parse(dateArray[0]), int.Parse(dateArray[1]), int.Parse(dateArray[2])),
                             Open = (decimal)quote["Open"],

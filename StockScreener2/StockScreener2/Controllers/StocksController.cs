@@ -168,8 +168,6 @@ namespace StockScreener2.Controllers
             DateTime startDate = DateTime.Now.AddDays(-days);
             List<HistoricalStockPrice> dbResult = db.HistoricalStockPrices.Where(hsp => hsp.StockID == id && hsp.Date >= startDate).ToList();
 
-            var ds = Helper.GetWorkingDays(startDate, DateTime.Now);
-
             //if dbResult does not find the total number of days.
             if (dbResult.Count < Helper.GetWorkingDays(startDate, DateTime.Now))
             {

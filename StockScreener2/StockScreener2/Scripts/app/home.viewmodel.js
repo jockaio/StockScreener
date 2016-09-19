@@ -11,7 +11,6 @@
     //For adding a new symbol
     self.stockSymbol = ko.observable("");
     self.addStock = function () {
-        console.log(self.stockSymbol());
         $.ajax({
             method: 'post',
             url: '/api/Stocks?stockSymbol=' + self.stockSymbol(),
@@ -20,8 +19,6 @@
                 'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
             },
             success: function (data) {
-                console.log("success:");
-                console.log(data);
                 self.stocks.push(
                             {
                                 id: data.id,
@@ -40,10 +37,6 @@
                             );
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                console.log("Error: ");
-                console.log(xhr);
-                console.log(ajaxOptions);
-                console.log(thrownError);
                 self.error(xhr.responseJSON);
                 self.showError(true);
                 setTimeout(function () { self.showError(false) }, 3000);
@@ -78,8 +71,10 @@
     }
     
     self.getChart = function (days) {
-        console.log(self.stockId());
-        console.log(days);
+        self.showChart(false);
+        self.resetChart();
+        self.loadingChart(true);
+
         if (days == undefined) {
             days = "";
         }
@@ -95,10 +90,6 @@
                 'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
             },
             success: function (data) {
-                console.log("success");
-                console.log(data);
-                self.dates.removeAll();
-                self.closingQuotes.removeAll();
                 var ds = [];
                 var cQs = [];
                 data.forEach(function (quote) {
@@ -106,6 +97,7 @@
                     self.closingQuotes.push(quote.adjClose);
                 });
                 self.stockName(data[0].symbol)
+                self.loadingChart(false);
                 self.showChart(true);
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -120,6 +112,13 @@
     self.stockId = ko.observable("");
     self.dates = ko.observableArray();
     self.closingQuotes = ko.observableArray();
+    self.loadingChart = ko.observable(false);
+
+    self.resetChart = function () {
+        self.stockName("");
+        self.dates.removeAll();
+        self.closingQuotes.removeAll();
+    };
 
     self.SimpleLineData = {
         labels: self.dates,
@@ -142,6 +141,9 @@
 
     Sammy(function () {
         this.get('#home', function () {
+            app.view(app.Views["Loading"]);
+            //Clean the collection of stocks before updating the data.
+            self.stocks.removeAll();
             $.ajax({
                 method: 'get',
                 url: '/api/Stocks',
@@ -150,9 +152,6 @@
                     'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
                 },
                 success: function (data) {
-                    console.log("success:");
-                    console.log(data);
-
                     data.forEach(function (stock) {
                         self.stocks.push(
                             {
@@ -171,9 +170,8 @@
                             }
                             );
                     });
-                    self.stocks().forEach(function (stock) {
-                        console.log(stock);
-                    });
+                    
+                    app.view(app.Views["Home"]);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
                     self.error(thrownError);

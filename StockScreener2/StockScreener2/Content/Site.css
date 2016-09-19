@@ -13,10 +13,10 @@ h1 {
     font-family: 'Baloo Tamma', cursive;
     font-weight: bold;
     font-size: 110px;
-    -webkit-transform: rotate(-3deg);
+    /*-webkit-transform: rotate(-3deg);
     -moz-transform: rotate(-3deg);
     -ms-transform: rotate(-3deg);
-    -o-transform: rotate(-3deg);
+    -o-transform: rotate(-3deg);*/
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 

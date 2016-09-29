@@ -8,6 +8,23 @@
     //Array of stocks
     self.stocks = ko.observableArray();
 
+    //Check LowSpreadPercentage
+    self.lowSpreadPercentageChecked = ko.observable(false);
+    self.checkLowSpreadPercentage = function () {
+        console.log("check");
+        if (self.lowSpreadPercentageChecked() == true) {
+            self.updateStocks();
+            self.lowSpreadPercentageChecked(false);
+        } else {
+            self.stocks().forEach(function (stock) {
+                if (stock.lowSpreadPercentage() < 0.1) {
+                    stock.highlight(true);
+                }
+            });
+            self.lowSpreadPercentageChecked(true);
+        }
+    }
+
     //For adding a new symbol
     self.stockSymbol = ko.observable("");
     self.addStock = function () {
@@ -20,20 +37,7 @@
             },
             success: function (data) {
                 self.stocks.push(
-                            {
-                                id: data.id,
-                                name: data.name,
-                                symbol: data.symbol,
-                                change: data.stockPrices[0].change,
-                                bid: data.stockPrices[0].bid,
-                                ask: data.stockPrices[0].ask,
-                                daysLow: data.stockPrices[0].daysLow,
-                                daysHigh: data.stockPrices[0].daysHigh,
-                                open: data.stockPrices[0].open,
-                                close: data.stockPrices[0].close,
-                                last: data.stockPrices[0].last,
-                                lastUpdate: new Date(data.stockPrices[0].created).toString().slice(16, 25)
-                            }
+                                new Stock(data)       
                             );
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -48,7 +52,7 @@
         var stock = this;
         $.ajax({
             method: 'delete',
-            url: '/api/Stocks/' + this.id,
+            url: '/api/Stocks/' + this.id(),
             contentType: "application/json; charset=utf-8",
             headers: {
                 'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
@@ -79,7 +83,7 @@
             days = "";
         }
         if (this.id != undefined) {
-            self.stockId(this.id);
+            self.stockId(this.id());
         }
         
         $.ajax({
@@ -139,50 +143,59 @@
         ]
     };
 
+    self.updateStocks = function () {
+        //Clean the collection of stocks before updating the data.
+        self.stocks.removeAll();
+        $.ajax({
+            method: 'get',
+            url: '/api/Stocks',
+            contentType: "application/json; charset=utf-8",
+            headers: {
+                'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
+            },
+            success: function (data) {
+                data.forEach(function (stock) {
+                    self.stocks.push(
+                            new Stock(stock)
+                        );
+                });
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                self.error(thrownError);
+                self.showError(true);
+            }
+        });
+    }
+
     Sammy(function () {
         this.get('#home', function () {
             app.view(app.Views["Loading"]);
-            //Clean the collection of stocks before updating the data.
-            self.stocks.removeAll();
-            $.ajax({
-                method: 'get',
-                url: '/api/Stocks',
-                contentType: "application/json; charset=utf-8",
-                headers: {
-                    'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
-                },
-                success: function (data) {
-                    data.forEach(function (stock) {
-                        self.stocks.push(
-                            {
-                                id: stock.id,
-                                name: stock.name,
-                                symbol: stock.symbol,
-                                change: stock.stockPrices[0].change,
-                                bid: stock.stockPrices[0].bid,
-                                ask: stock.stockPrices[0].ask,
-                                daysLow: stock.stockPrices[0].daysLow,
-                                daysHigh: stock.stockPrices[0].daysHigh,
-                                open: stock.stockPrices[0].open,
-                                close: stock.stockPrices[0].close,
-                                last: stock.stockPrices[0].last,
-                                lastUpdate: new Date(stock.stockPrices[0].created).toString().slice(16, 25)
-                            }
-                            );
-                    });
-                    
-                    app.view(app.Views["Home"]);
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    self.error(thrownError);
-                    self.showError(true);
-                }
-            });
+            self.updateStocks();
+            app.view(app.Views["Home"]);
         });
         this.get('/', function () { this.app.runRoute('get', '#home') });
     });
 
     return self;
+}
+
+function Stock(data) {
+    var self = this;
+    self.id = ko.observable(data.id),
+    self.name = ko.observable(data.name),
+    self.symbol = ko.observable(data.symbol),
+    self.change = ko.observable(data.stockPrices[0].change),
+    self.bid = ko.observable(data.stockPrices[0].bid),
+    self.ask = ko.observable(data.stockPrices[0].ask),
+    self.daysLow = ko.observable(data.stockPrices[0].daysLow),
+    self.daysHigh = ko.observable(data.stockPrices[0].daysHigh),
+    self.open = ko.observable(data.stockPrices[0].open),
+    self.close = ko.observable(data.stockPrices[0].close),
+    self.last = ko.observable(data.stockPrices[0].last),
+    self.lowSpreadPercentage = ko.observable(data.stockPrices[0].lowSpreadPercentage),
+    self.lastUpdate = ko.observable(new Date(data.stockPrices[0].created).toString().slice(16, 25)),
+    self.highlight = ko.observable(false)
 }
 
 app.addViewModel({

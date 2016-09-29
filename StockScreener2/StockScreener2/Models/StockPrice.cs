@@ -22,5 +22,10 @@ namespace StockScreener2.Models
         public decimal? Close { get; set; }
         public decimal Last { get; set; }
         public DateTime Created { get; set; }
+
+        [NotMapped]
+        public decimal LowSpreadPercentage {
+            get { return (Last - DaysLow) / (DaysHigh - DaysLow); }
+        }
     }
 }

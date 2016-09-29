@@ -50,7 +50,7 @@ namespace StockScreener2.Controllers
 
             stockPriceContext.SaveChanges();
             
-            return result;
+            return result.OrderBy(res => res.Name).ToList();
         }
 
         // GET: api/Stocks/5

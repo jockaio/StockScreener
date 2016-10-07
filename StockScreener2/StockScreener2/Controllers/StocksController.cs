@@ -35,7 +35,14 @@ namespace StockScreener2.Controllers
 
                 if (stockPrice == null || stockPrice.Created < DateTime.Now.AddHours(-1))
                 {
-                    stockPrice = DataFetcher.GetStockQuote(stock.Symbol).StockPrices.FirstOrDefault();
+                    try
+                    {
+                        stockPrice = DataFetcher.GetStockQuote(stock.Symbol).StockPrices.FirstOrDefault();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                     stockPrice.StockID = stock.ID;
                     stockPriceContext.StockPrices.Add(stockPrice);
                 }
@@ -166,16 +173,24 @@ namespace StockScreener2.Controllers
 
             //Create startDate to be able to submit LINQ expression.
             DateTime startDate = DateTime.Now.AddDays(-days);
-            List<HistoricalStockPrice> dbResult = db.HistoricalStockPrices.Where(hsp => hsp.StockID == id && hsp.Date >= startDate).ToList();
+            List<HistoricalStockPrice> dbResult = db.HistoricalStockPrices.Where(hsp => hsp.StockID == id && hsp.Date >= startDate).OrderBy(s => s.Date).ToList();
 
             //if dbResult does not find the total number of days.
-            if (dbResult.Count < Helper.GetWorkingDays(startDate, DateTime.Now))
+            if (dbResult.Count < ((Helper.GetWorkingDays(startDate, DateTime.Now))-1))
             {
                 //Get historical quotes from API and save the missing dates in the DB.
-                List<HistoricalStockPrice> apiResult = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-days), DateTime.Now, id).OrderBy(s => s.Date).ToList();
-                //var comparedResult = apiResult.Except(dbResult, new HistoricalStockPriceComparer()).ToList();
-                PostHistoricalStockPrices(apiResult.Except(dbResult, new HistoricalStockPriceComparer()).ToList());
-                result = apiResult;
+                try
+                {
+                    List<HistoricalStockPrice> apiResult = DataFetcher.GetHistoricalStockPrice(stockSymbol, DateTime.Now.AddDays(-days), DateTime.Now, id).OrderBy(s => s.Date).ToList();
+                    //var comparedResult = apiResult.Except(dbResult, new HistoricalStockPriceComparer()).ToList();
+                    PostHistoricalStockPrices(apiResult.Except(dbResult, new HistoricalStockPriceComparer()).ToList());
+                    result = apiResult;
+                }
+                catch (Exception)
+                {
+
+                    return Content(HttpStatusCode.BadRequest, "Historical quotes not available at the moment.");
+                }
             }
             else
             {

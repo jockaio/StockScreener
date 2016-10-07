@@ -61,7 +61,7 @@ tbody tr {
 
 .highLight {
     font-weight: bold;
-    background-color: #c0efbf;
+    /*background-color: #c0efbf;*/
 }
 
 @media only screen and (max-width: 767px) {

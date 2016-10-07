@@ -11,16 +11,27 @@
     //Check LowSpreadPercentage
     self.lowSpreadPercentageChecked = ko.observable(false);
     self.checkLowSpreadPercentage = function () {
+        var tempArray = [];
         console.log("check");
         if (self.lowSpreadPercentageChecked() == true) {
             self.updateStocks();
             self.lowSpreadPercentageChecked(false);
         } else {
             self.stocks().forEach(function (stock) {
+                console.log(stock.name() + ": " + stock.lowSpreadPercentage());
                 if (stock.lowSpreadPercentage() < 0.1) {
                     stock.highlight(true);
+                    tempArray.push(stock);
+                    self.stocks.remove(stock);
                 }
             });
+            //Reverse the order to have them in alphbetical order when unshifting stock-array.
+            tempArray.reverse();
+            tempArray.forEach(function (stock) {
+                console.log(stock.name());
+                self.stocks.unshift(stock);
+            });
+
             self.lowSpreadPercentageChecked(true);
         }
     }
@@ -41,6 +52,7 @@
                             );
             },
             error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr);
                 self.error(xhr.responseJSON);
                 self.showError(true);
                 setTimeout(function () { self.showError(false) }, 3000);
@@ -105,8 +117,11 @@
                 self.showChart(true);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                self.error(thrownError);
+                console.log(xhr);
+                self.error(xhr.responseJSON);
                 self.showError(true);
+                setTimeout(function () { self.showError(false) }, 3000);
+                self.loadingChart(false);
             }
         });
     }
@@ -162,8 +177,10 @@
 
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                self.error(thrownError);
+                console.log(xhr);
+                self.error(xhr.responseJSON);
                 self.showError(true);
+                setTimeout(function () { self.showError(false) }, 3000);
             }
         });
     }

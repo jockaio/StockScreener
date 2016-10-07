@@ -12,17 +12,25 @@
             <div class="row">
                 <div class="col-md-12">
                     <form data-bind="submit: addStock">
-                        <div class="input-group col-md-6 no-side-margin">
-                            <span class="input-group-addon" id="basic-addon1">Add Stock</span>
-                            <input type="text" class="form-control" placeholder="Enter symbol"
-                                   data-bind='value: stockSymbol, valueUpdate: "afterkeydown"' aria-describedby="basic-addon1">
+                        <div class="row">
+                            <div class="input-group col-md-6 no-side-margin">
+                                <span class="input-group-addon" id="basic-addon1">Add Stock</span>
+                                <input type="text" class="form-control" placeholder="Enter symbol"
+                                       data-bind='value: stockSymbol, valueUpdate: "afterkeydown"' aria-describedby="basic-addon1">
+                            </div>
                         </div>
-                        <div class="btn-group col-md-12" role="group" aria-label="Basic example">
-                            <button type="button" data-bind="click: checkLowSpreadPercentage, css: { active: lowSpreadPercentageChecked() === true }" class="btn btn-primary">Ricoschett</button>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" data-bind="click: checkLowSpreadPercentage, css: { active: lowSpreadPercentageChecked() === true }" class="btn btn-primary">Ricoschett</button>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="button" data-bind="click: refreshStocks" class="btn btn-xs pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
+                
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -34,7 +42,7 @@
                         <th>High</th>
                         <th>Low</th>
                         <th>Open</th>
-                        <th>Last update</th>
+                        <th>Updated</th>
                         <th></th>
                     </tr>
                 </thead>

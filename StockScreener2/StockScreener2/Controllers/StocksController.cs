@@ -19,7 +19,7 @@ namespace StockScreener2.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Stocks
-        public List<Stock> GetStocks()
+        public List<Stock> GetStocks(bool forceRefresh)
         {
             List<Stock> result = new List<Stock>();
 
@@ -33,7 +33,7 @@ namespace StockScreener2.Controllers
             {
                 stockPrice = stockPriceContext.StockPrices.Where(s => s.StockID == stock.ID).OrderByDescending(s => s.Created).First();
 
-                if (stockPrice == null || stockPrice.Created < DateTime.Now.AddHours(-1))
+                if ((stockPrice == null || stockPrice.Created < DateTime.Now.AddHours(-1)) || forceRefresh)
                 {
                     try
                     {

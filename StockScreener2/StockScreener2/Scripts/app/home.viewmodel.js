@@ -158,12 +158,16 @@
         ]
     };
 
-    self.updateStocks = function () {
+    self.refreshStocks = function () {
+        self.updateStocks(true);
+    }
+
+    self.updateStocks = function (forceUpdate) {
         //Clean the collection of stocks before updating the data.
         self.stocks.removeAll();
         $.ajax({
             method: 'get',
-            url: '/api/Stocks',
+            url: '/api/Stocks?forceRefresh=' + forceUpdate,
             contentType: "application/json; charset=utf-8",
             headers: {
                 'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
@@ -188,7 +192,7 @@
     Sammy(function () {
         this.get('#home', function () {
             app.view(app.Views["Loading"]);
-            self.updateStocks();
+            self.updateStocks(false);
             app.view(app.Views["Home"]);
         });
         this.get('/', function () { this.app.runRoute('get', '#home') });

@@ -12,13 +12,11 @@
     self.lowSpreadPercentageChecked = ko.observable(false);
     self.checkLowSpreadPercentage = function () {
         var tempArray = [];
-        console.log("check");
         if (self.lowSpreadPercentageChecked() == true) {
-            self.updateStocks();
+            self.updateStocks(false);
             self.lowSpreadPercentageChecked(false);
         } else {
             self.stocks().forEach(function (stock) {
-                console.log(stock.name() + ": " + stock.lowSpreadPercentage());
                 if (stock.lowSpreadPercentage() < 0.1) {
                     stock.highlight(true);
                     tempArray.push(stock);
@@ -28,7 +26,6 @@
             //Reverse the order to have them in alphbetical order when unshifting stock-array.
             tempArray.reverse();
             tempArray.forEach(function (stock) {
-                console.log(stock.name());
                 self.stocks.unshift(stock);
             });
 
@@ -53,7 +50,7 @@
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr);
-                self.error(xhr.responseJSON);
+                self.error(xhr.responseText);
                 self.showError(true);
                 setTimeout(function () { self.showError(false) }, 3000);
             }
@@ -73,8 +70,9 @@
                 self.stocks.remove(stock);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                self.error(thrownError);
+                self.error(xhr.responseText);
                 self.showError(true);
+                setTimeout(function () { self.showError(false) }, 3000);
             }
         });
     }
@@ -118,7 +116,7 @@
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr);
-                self.error(xhr.responseJSON);
+                self.error(xhr.responseText);
                 self.showError(true);
                 setTimeout(function () { self.showError(false) }, 3000);
                 self.loadingChart(false);
@@ -178,11 +176,10 @@
                             new Stock(stock)
                         );
                 });
-
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr);
-                self.error(xhr.responseJSON);
+                self.error(xhr.responseText);
                 self.showError(true);
                 setTimeout(function () { self.showError(false) }, 3000);
             }
@@ -202,6 +199,16 @@
 }
 
 function Stock(data) {
+
+    //Calculations
+    var calculations = data.stockPrices[0].calculations;
+    var lowSP = "";
+    calculations.forEach(function (calc){
+        if (calc.calculationType == 0) {
+            lowSP = calc.value;
+        }
+    });
+
     var self = this;
     self.id = ko.observable(data.id),
     self.name = ko.observable(data.name),
@@ -214,7 +221,7 @@ function Stock(data) {
     self.open = ko.observable(data.stockPrices[0].open),
     self.close = ko.observable(data.stockPrices[0].close),
     self.last = ko.observable(data.stockPrices[0].last),
-    self.lowSpreadPercentage = ko.observable(data.stockPrices[0].lowSpreadPercentage),
+    self.lowSpreadPercentage = ko.observable(lowSP),
     self.lastUpdate = ko.observable(new Date(data.stockPrices[0].created).toString().slice(16, 25)),
     self.highlight = ko.observable(false)
 }

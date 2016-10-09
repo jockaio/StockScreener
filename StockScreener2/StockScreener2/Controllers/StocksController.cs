@@ -47,6 +47,8 @@ namespace StockScreener2.Controllers
                     stockPriceContext.StockPrices.Add(stockPrice);
                 }
 
+                stockPrice.CalculateValues();
+
                 if (stock.StockPrices.Count > 0)
                 {
                     stock.StockPrices.Clear();

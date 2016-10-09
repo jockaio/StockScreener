@@ -246,8 +246,21 @@
     <Compile Include="Migrations\201609171724524_dbupdate10.Designer.cs">
       <DependentUpon>201609171724524_dbupdate10.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201610091830272_dbupdate11.cs" />
+    <Compile Include="Migrations\201610091830272_dbupdate11.Designer.cs">
+      <DependentUpon>201610091830272_dbupdate11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610091832144_dbupdate12.cs" />
+    <Compile Include="Migrations\201610091832144_dbupdate12.Designer.cs">
+      <DependentUpon>201610091832144_dbupdate12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201610091850271_dbupdate13.cs" />
+    <Compile Include="Migrations\201610091850271_dbupdate13.Designer.cs">
+      <DependentUpon>201610091850271_dbupdate13.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Calculation.cs" />
     <Compile Include="Models\HistoricalStockPrice.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -384,6 +397,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201609171724524_dbupdate10.resx">
       <DependentUpon>201609171724524_dbupdate10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610091830272_dbupdate11.resx">
+      <DependentUpon>201610091830272_dbupdate11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610091832144_dbupdate12.resx">
+      <DependentUpon>201610091832144_dbupdate12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201610091850271_dbupdate13.resx">
+      <DependentUpon>201610091850271_dbupdate13.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

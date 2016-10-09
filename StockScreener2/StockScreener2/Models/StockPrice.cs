@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockScreener2.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -24,8 +25,25 @@ namespace StockScreener2.Models
         public DateTime Created { get; set; }
 
         [NotMapped]
-        public decimal LowSpreadPercentage {
-            get { return (Last - DaysLow) / (DaysHigh - DaysLow); }
+        public List<Calculation> Calculations { get; set; }
+
+        //[NotMapped]
+        //public decimal LowSpreadPercentage {
+        //    get { return (Last - DaysLow) / (DaysHigh - DaysLow); }
+        //}
+
+        public void CalculateValues()
+        {
+            if (Calculations == null)
+            {
+                Calculations = new List<Calculation>(); 
+            }
+            //Do stock calculations.
+            Calculations.Add(new Calculation
+            {
+                CalculationType = CalculationType.LowSpreadPercentage,
+                Value = (Last - DaysLow) / (DaysHigh - DaysLow)
+            });
         }
     }
 }

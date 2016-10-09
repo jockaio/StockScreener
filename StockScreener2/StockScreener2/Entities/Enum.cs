@@ -7,6 +7,17 @@ namespace StockScreener2.Entities
 {
     public enum CalculationType
     {
-        DaysLow
+        LowSpreadPercentage
+    }
+
+    public enum Operator
+    {
+        Plus,
+        Minus,
+        MoreThan,
+        LessThan,
+        EqualTo,
+        LessOrEqualTo,
+        MoreOrEqualTo
     }
 }

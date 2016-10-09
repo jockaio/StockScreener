@@ -1,7 +1,29 @@
 ﻿<!-- ko with: settings -->
 <div data-bind="visible: app.view().constructor.name == 'SettingsViewModel'">
-    <div>
-        Hi this is the settings
+    <div class="row">
+        <h2>Settings</h2>
+    </div>
+    <div class="row">
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Calculation Type</th>
+                        <th>Operator</th>
+                        <th>Trigger Value</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: settings">
+                    <tr>
+                        <td><span data-bind="text: id"> </span></td>
+                        <td><span data-bind="text: calculationType"> </span></td>
+                        <td><span data-bind="text: operator"> </span></td>
+                        <td><span data-bind="text: targetValue"> </span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 <!-- /ko -->

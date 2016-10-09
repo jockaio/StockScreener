@@ -35,5 +35,6 @@ namespace StockScreener2.Models
         public System.Data.Entity.DbSet<StockScreener2.Models.Stock> Stocks { get; set; }
         public System.Data.Entity.DbSet<StockScreener2.Models.StockPrice> StockPrices { get; set; }
         public System.Data.Entity.DbSet<StockScreener2.Models.HistoricalStockPrice> HistoricalStockPrices { get; set; }
+        public System.Data.Entity.DbSet<StockScreener2.Models.Setting> Settings { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Services.Description;
 
 namespace StockScreener2.Models
 {
@@ -15,9 +16,10 @@ namespace StockScreener2.Models
     {
         public int ID { get; set; }
 
-        public int UserID { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public string UserID { get; set; }
 
-        CalculationType CalculationType { get; set; }
+        public CalculationType CalculationType { get; set; }
+        public Operator Operator { get; set; }
+        public decimal TargetValue { get; set; }
     }
 }

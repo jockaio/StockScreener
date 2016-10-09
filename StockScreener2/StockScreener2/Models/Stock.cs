@@ -27,6 +27,7 @@ namespace StockScreener2.Models
                 Close = (decimal?)jStock["Close"],
                 Change = (decimal)jStock["Change"],
                 Last = (decimal)jStock["LastTradePriceOnly"],
+                Calculations = new List<Calculation>(),
                 Created = DateTime.Now
 
             });

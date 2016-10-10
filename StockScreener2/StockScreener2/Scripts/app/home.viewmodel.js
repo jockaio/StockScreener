@@ -78,15 +78,13 @@
     }
 
     //show stock chart
-    self.chartLength = ko.observable(7);
     self.showChart = ko.observable(false);
     self.hideChart = function () {
         self.showChart(false);
     }
-    
+
     self.getChart = function (days) {
         self.showChart(false);
-        self.resetChart();
         self.loadingChart(true);
 
         if (days == undefined) {
@@ -95,22 +93,45 @@
         if (this.id != undefined) {
             self.stockId(this.id());
         }
-        
+
         $.ajax({
             method: 'get',
-            url: '/api/Stocks/GetHistoricalQuotes/'+self.stockId()+'/'+days,
+            url: '/api/Stocks/GetHistoricalQuotes/' + self.stockId() + "/",
             contentType: "application/json; charset=utf-8",
             headers: {
                 'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
             },
             success: function (data) {
-                var ds = [];
-                var cQs = [];
-                data.forEach(function (quote) {
-                    self.dates.push(new Date(quote.date).toString("dd/MM"));
-                    self.closingQuotes.push(quote.adjClose);
+                var result = [];
+                data.forEach(function (p) {
+                    result.push(
+                        [
+                          new Date(p.date).getTime(),
+                          p.close
+                        ]
+                        );
+                    console.log(new Date(p.date).getTime());
+                })
+                
+                $('#highstockChart').highcharts('StockChart', {
+
+
+                    rangeSelector: {
+                        selected: 1
+                    },
+
+                    title: {
+                        text: data[0].symbol
+                    },
+
+                    series: [{
+                        name: data[0].symbol,
+                        data: result,
+                        tooltip: {
+                            valueDecimals: 2
+                        }
+                    }]
                 });
-                self.stockName(data[0].symbol)
                 self.loadingChart(false);
                 self.showChart(true);
             },
@@ -125,36 +146,8 @@
     }
 
     //chart
-    self.stockName = ko.observable("");
-    self.stockId = ko.observable("");
-    self.dates = ko.observableArray();
-    self.closingQuotes = ko.observableArray();
     self.loadingChart = ko.observable(false);
-
-    self.resetChart = function () {
-        self.stockName("");
-        self.dates.removeAll();
-        self.closingQuotes.removeAll();
-    };
-
-    self.SimpleLineData = {
-        labels: self.dates,
-        datasets: [
-            {
-                label: self.stockName,
-                lineTension: 0,
-                pointStyle: "rectRot",
-                pointHitRadius: 20,
-                backgroundColor: "rgba(220,220,220,0.2)",
-                borderColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: self.closingQuotes
-            }
-        ]
-    };
+    self.stockId = ko.observable();
 
     self.refreshStocks = function () {
         self.updateStocks(true);

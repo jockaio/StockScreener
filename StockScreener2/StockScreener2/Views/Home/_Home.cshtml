@@ -1,15 +1,7 @@
 ﻿<!-- ko with: home -->
 <div data-bind="visible: app.view().constructor.name == 'HomeViewModel'">
     <div class="row">
-        <div class="col-md-6">
-            <div class="row" style="height: 60px; margin-top: 5px;">
-                <div class="alert alert-danger col-md-12" role="alert" data-bind="fadeVisible: showError">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                    <span class="sr-only">Error:</span>
-                    <span data-bind="text: error"></span>
-                </div>
-            </div>
-            <div class="row">
+            <div class="row" style="margin-top: 10px;">
                 <div class="col-md-12">
                     <form data-bind="submit: addStock">
                         <div class="row">
@@ -23,15 +15,15 @@
                             <div class="col-md-12">
                                 <button type="button" data-bind="click: checkLowSpreadPercentage, css: { active: lowSpreadPercentageChecked() === true }" class="btn btn-primary">Ricoschett</button>
                             </div>
-                            <div class="col-md-12">
-                                <button type="button" data-bind="click: refreshStocks" class="btn btn-xs pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
-                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-                
-            <table class="table table-striped table-hover">
+        <div class="col-md-6" role="main">
+            <div class="col-md-12">
+                <button type="button" data-bind="click: refreshStocks" class="btn btn-xs pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+            </div>
+            <table id="mainStockList" class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th>Symbol</th>
@@ -62,23 +54,18 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 chart-to-the-right" data-spy="affix">
             <div data-bind="fadeVisible: loadingChart">
                 <p>Loading chart</p>
             </div>
+            <div class="alert alert-danger col-md-12" role="alert" data-bind="fadeVisible: showError">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                <span data-bind="text: error"></span>
+            </div>
             <div data-bind="fadeVisible: showChart">
-                <h2 data-bind="text: stockName"></h2>
                 <span class="close-button glyphicon glyphicon-remove" data-bind="click: hideChart" title="Close chart"></span>
-                <div id="chart">
-                    <canvas id="stock-chart-canvas"
-                            data-bind="chart: { type: 'line', data: SimpleLineData, options: { observeChanges: true, throttle: 3000 }}"></canvas>
-                </div>
-                @* Add class to selected button *@
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 7)">1W</button>
-                    <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 30)">1M</button>
-                    <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 90)">3M</button>
-                    <button type="button" class="btn" data-bind="click: getChart.bind(self.stockId, 365)">1Y</button>
+                <div id="highstockChart">
                 </div>
             </div>
         </div>

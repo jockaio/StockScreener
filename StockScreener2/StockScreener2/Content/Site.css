@@ -46,7 +46,7 @@ textarea {
     padding-top: 20px;
 }
 
-tbody tr {
+#mainStockList tbody tr {
     cursor:pointer;
 }
 
@@ -62,6 +62,11 @@ tbody tr {
 .highLight {
     font-weight: bold;
     /*background-color: #c0efbf;*/
+}
+
+
+.chart-to-the-right{
+    right:0;
 }
 
 @media only screen and (max-width: 767px) {

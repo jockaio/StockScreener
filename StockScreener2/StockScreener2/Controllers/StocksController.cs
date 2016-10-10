@@ -162,7 +162,7 @@ namespace StockScreener2.Controllers
         //GET: api/Stocks/GetHistoricalQuotes
         [Route("api/Stocks/GetHistoricalQuotes/{id}/{days?}")]
         [ResponseType(typeof(List<HistoricalStockPrice>))]
-        public IHttpActionResult GetHistoricalQuotes(int id, int days = 7)
+        public IHttpActionResult GetHistoricalQuotes(int id, int days = 350)
         {
             string stockSymbol = db.Stocks.Where(s => s.ID == id).Select(s => s.Symbol).First();
 
